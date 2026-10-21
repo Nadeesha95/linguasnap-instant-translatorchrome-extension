@@ -3,7 +3,7 @@
 
  This Chrome extension simplifies translation tasks by instantly converting selected text into Sinhala. Seamlessly integrate translation capabilities into your browsing experience, making language comprehension effortless. Enhance your browsing by translating on-the-go with this lightweight, user-friendly extension.
 
-<div > <img src="https://i.ibb.co/sKSVZWS/Sri-Lankan-Flag-Identifier.gif" > </div>
+<div > <img src="https://i.ibb.co/PzMTjTNn/Add-a-heading.png" > </div>
 
 Download : https://microsoftedge.microsoft.com/addons/detail/aiojaijekaanaheoheinapclcipfkdob
 
