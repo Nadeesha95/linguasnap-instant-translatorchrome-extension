@@ -5,7 +5,9 @@
 
 <div > <img src="https://i.ibb.co/PzMTjTNn/Add-a-heading.png" > </div>
 
-Download : https://microsoftedge.microsoft.com/addons/detail/aiojaijekaanaheoheinapclcipfkdob
+Download 
+Edge : https://microsoftedge.microsoft.com/addons/detail/aiojaijekaanaheoheinapclcipfkdob
+Chrome : https://chromewebstore.google.com/detail/linguasnap-%E2%80%93-instant-tran/okemdgokgchnocohlbdojahaebmekjel
 
 ## Tech Stack
 
