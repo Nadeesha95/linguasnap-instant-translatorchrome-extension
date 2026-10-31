@@ -143,26 +143,27 @@ async function handleSelection(event) {
     }
 
     let translatedText = null;
+    let detectedLang = sourceLang;
 
     // Step 2: if target is Sinhala, source is English, and single word — try dictionary first
     if (targetLang === 'si' && sourceLang === 'en') {
       translatedText = tryDictTranslation(selectedText);
     }
 
-    // Step 3: fall back to API if dictionary missed or multi-word
+    // Step 3: fall back to API (Google, then MyMemory — via background) if dictionary missed or multi-word
     if (!translatedText) {
-      const apiURL = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(selectedText)}&langpair=${sourceLang}|${targetLang}`;
-      const response = await fetch(apiURL);
-      const data = await response.json();
-      if (data?.responseData?.translatedText) {
-        translatedText = data.responseData.translatedText;
-      }
+      const result = await chrome.runtime.sendMessage({
+        action: 'translate', text: selectedText, sourceLang, targetLang
+      });
+      if (!result?.ok) throw new Error(result?.error || 'Translation failed');
+      translatedText = result.translatedText;
+      detectedLang = result.sourceLang || sourceLang;
     }
 
     const newTotal = await addUsedWords(wordCount);
     loadingEl.remove();
 
-    showTooltip(event, translatedText || selectedText, 'result', { wordCount, newTotal, sourceLang });
+    showTooltip(event, translatedText || selectedText, 'result', { wordCount, newTotal, sourceLang: detectedLang });
 
   } catch (error) {
     loadingEl.remove();
