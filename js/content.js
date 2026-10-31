@@ -1,6 +1,7 @@
 let isEnabled = false;
 let targetLang = 'si';
-const DAILY_LIMIT = 500;
+// Keeps the Google GET request URL within a safe length
+const MAX_CHARS = 2000;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.enableTranslation !== undefined) {
@@ -117,15 +118,8 @@ async function handleSelection(event) {
 
   const wordCount = selectedText.split(/\s+/).filter(Boolean).length;
 
-  const used = await getUsedWords();
-  if (used >= DAILY_LIMIT) {
-    showTooltip(event, '⚠️ Daily limit reached (500 words). Resets at midnight.', 'limit');
-    return;
-  }
-
-  const remaining = DAILY_LIMIT - used;
-  if (wordCount > remaining) {
-    showTooltip(event, `⚠️ Only ${remaining} words remaining today.`, 'limit');
+  if (selectedText.length > MAX_CHARS) {
+    showTooltip(event, `⚠️ Selection too long — please select under ${MAX_CHARS} characters.`, 'limit');
     return;
   }
 
@@ -210,7 +204,7 @@ function showTooltip(event, text, type = 'result', meta = null) {
       <div class="ls-meta">
         <span>${meta.wordCount} word${meta.wordCount !== 1 ? 's' : ''}</span>
         <span class="ls-dot">·</span>
-        <span>${meta.newTotal}/${DAILY_LIMIT} today</span>
+        <span>${meta.newTotal} today</span>
       </div>
     ` : '';
 

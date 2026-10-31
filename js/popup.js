@@ -26,16 +26,12 @@ const LANGUAGES = [
   { code: 'el', name: 'Greek',      native: 'Ελληνικά',        flag: '🇬🇷' },
 ];
 
-const DAILY_LIMIT = 500;
-
 let selectedLang = LANGUAGES[0];
 let isOpen = false;
 
 const toggleSwitch   = document.getElementById('toggleSwitch');
 const powerLabel     = document.getElementById('powerLabel');
 const usedWordsEl    = document.getElementById('usedWords');
-const usageBar       = document.getElementById('usageBar');
-const usageInfo      = document.getElementById('usageInfo');
 const statusPill     = document.getElementById('statusPill');
 const statusText     = document.getElementById('statusText');
 const selectedLangEl = document.getElementById('selectedLang');
@@ -111,27 +107,10 @@ selectedLangEl.addEventListener('click', () => isOpen ? closeDropdown() : openDr
 langSearch.addEventListener('input', () => buildLangGrid(langSearch.value));
 
 function updateUsageUI(used) {
-  const pct = Math.min((used / DAILY_LIMIT) * 100, 100);
   usedWordsEl.textContent = used;
-  usageBar.style.width = pct + '%';
-  usageBar.className = 'bar-fill';
-  if (pct >= 100) {
-    usageBar.classList.add('danger');
-    usageInfo.textContent = '⚠️ Daily limit reached — resets at midnight';
-  } else if (pct >= 75) {
-    usageBar.classList.add('warn');
-    usageInfo.textContent = `${DAILY_LIMIT - used} words remaining today`;
-  } else {
-    usageInfo.textContent = `${DAILY_LIMIT - used} words remaining · Resets at midnight`;
-  }
 }
 
-function updateStatus(enabled, used) {
-  if (used >= DAILY_LIMIT) {
-    statusPill.className = 'status-pill limited';
-    statusText.textContent = 'Daily limit reached — resets at midnight';
-    return;
-  }
+function updateStatus(enabled) {
   if (enabled) {
     statusPill.className = 'status-pill on';
     statusText.textContent = `Active · Translating to ${selectedLang.name}`;
@@ -146,10 +125,7 @@ function updateStatus(enabled, used) {
 toggleSwitch.addEventListener('change', () => {
   const enabled = toggleSwitch.checked;
   chrome.storage.local.set({ extensionEnabled: enabled });
-  chrome.storage.local.get(getTodayKey(), data => {
-    const used = data[getTodayKey()] || 0;
-    updateStatus(enabled, used);
-  });
+  updateStatus(enabled);
   notifyContentScript(enabled);
 });
 
@@ -187,7 +163,7 @@ chrome.storage.local.get(['extensionEnabled', 'targetLang', getTodayKey()], data
 
   updateSelectedDisplay();
   updateUsageUI(used);
-  updateStatus(enabled, used);
+  updateStatus(enabled);
 
   if (isFirstRun) notifyContentScript(true);
 });
