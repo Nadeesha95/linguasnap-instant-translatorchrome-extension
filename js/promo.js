@@ -2,7 +2,7 @@
 
 const PROMO_URL = 'https://nadeesha95.github.io/youtube-auto-dub/';
 const PROMO_KEY = 'autoDubPromoShown';
-const MAX_SHOWS = 3;
+const MAX_SHOWS = 6;
 
 chrome.storage.local.get(PROMO_KEY, data => {
   const shown = data[PROMO_KEY] || 0;

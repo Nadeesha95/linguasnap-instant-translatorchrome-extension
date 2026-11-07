@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LinguaSnap – Instant Translator",
-  "version": "4.0",
+  "version": "4.2",
   "description": "Select any text to instantly translate into 25 languages. Select to translate",
   "permissions": ["activeTab", "storage", "scripting"],
   "host_permissions": [
