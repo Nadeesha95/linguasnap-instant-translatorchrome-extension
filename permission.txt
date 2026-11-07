@@ -1,0 +1,19 @@
+Single purpose:
+
+LinguaSnap translates text that the user selects on a web page and shows the translation in a small tooltip next to the selection.
+
+activeTab:
+
+Used by the popup to send the user's on/off setting and chosen language to the current tab.
+
+storage:
+
+Saves the user's settings on their own device: on/off state, chosen language, and a daily word count. Nothing is sent to our servers.
+
+Host permissions (translate.googleapis.com, api.mymemory.translated.net):
+
+The background service worker sends only the text the user selected to these translation services and shows the result. The requests run in the background so website security settings can't block them.
+
+Content script on all URLs:
+
+Users can select and translate text on any website. The script only reacts when the user selects text. It does not read, collect or change the page otherwise.
