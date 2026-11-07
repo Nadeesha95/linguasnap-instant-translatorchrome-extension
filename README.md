@@ -1,21 +1,38 @@
+# LinguaSnap – Instant Translator Extension
 
-# English To Sinhala Text Translator Chrome Extension
+A Chrome extension that translates selected text into 25 languages with a 500 words/day limit.
 
- This Chrome extension simplifies translation tasks by instantly converting selected text into Sinhala. Seamlessly integrate translation capabilities into your browsing experience, making language comprehension effortless. Enhance your browsing by translating on-the-go with this lightweight, user-friendly extension.
+## Installation
 
-<div > <img src="https://i.ibb.co/PzMTjTNn/Add-a-heading.png" > </div>
+1. Open Chrome and go to `chrome://extensions/`
+2. Enable **Developer Mode** (top-right toggle)
+3. Click **Load unpacked**
+4. Select the `translator-extension` folder
 
-Download 
-Edge : https://microsoftedge.microsoft.com/addons/detail/aiojaijekaanaheoheinapclcipfkdob
-Chrome : https://chromewebstore.google.com/detail/linguasnap-%E2%80%93-instant-tran/okemdgokgchnocohlbdojahaebmekjel
+## Features
 
-## Tech Stack
+- 🌐 **25 languages** — Sinhala, Tamil, Chinese, Spanish, French, German, Japanese, Korean, Arabic, Hindi, Portuguese, Russian, Italian, Dutch, Turkish, Polish, Swedish, Indonesian, Malay, Thai, Vietnamese, Ukrainian, Bengali, Persian, Greek
+- 🎯 **Select any text** on any webpage → instant translation tooltip
+- 📊 **500 words/day limit** with visual usage bar
+- 🔄 **Auto-resets** at midnight daily
+- 🎨 **Beautiful dark UI** with language search
+- auto detect language
 
-- **Frontend:** HTML, CSS, JavaScript
-- **Backend:** Node.js
-- **APIs:** MyMemory Translator API
+## Usage
 
+1. Click the extension icon in the toolbar
+2. Select your target language
+3. Toggle the extension **ON**
+4. Select any English text on a webpage — the translation appears in a tooltip
 
-## Support
+## Files
 
-Feel free to adjust and add any specific details or features that make your extension unique!
+```
+translator-extension/
+├── manifest.json      # Extension config
+├── popup.html         # Popup UI
+├── popup.js           # Popup logic + language list
+├── content.js         # Page script (selection + tooltip)
+├── tooltip.css        # Tooltip styles injected into pages
+└── icons/             # Extension icons
+```

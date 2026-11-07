@@ -1,27 +1,430 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Hover Text Display</title>
-  <link rel="stylesheet" href="css/style.css">
-    <script src="js/popup.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinguaSnap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --card: #1a1a25;
+      --border: #2a2a3a;
+      --accent: #7c6af7;
+      --accent2: #f76a8a;
+      --glow: rgba(124, 106, 247, 0.25);
+      --text: #f0f0ff;
+      --muted: #888aa0;
+      --success: #4ade80;
+      --warn: #fbbf24;
+      --danger: #f87171;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 340px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      overflow: hidden;
+    }
+
+    /* Ambient glow top */
+    .ambient {
+      position: absolute;
+      top: -60px; left: 50%;
+      transform: translateX(-50%);
+      width: 200px; height: 100px;
+      background: radial-gradient(ellipse, rgba(124,106,247,0.4) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Header */
+    .header {
+      position: relative;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(124,106,247,0.08) 0%, transparent 100%);
+    }
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 0 20px var(--glow);
+    }
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo-sub {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    /* Power toggle */
+    .power-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .power-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .toggle {
+      position: relative;
+      width: 44px; height: 24px;
+      cursor: pointer;
+    }
+    .toggle input { display: none; }
+    .toggle-track {
+      width: 44px; height: 24px;
+      background: var(--border);
+      border-radius: 12px;
+      transition: background 0.3s;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .toggle input:checked + .toggle-track {
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      box-shadow: 0 0 12px var(--glow);
+    }
+    .toggle-thumb {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .toggle input:checked ~ .toggle-thumb {
+      transform: translateX(20px);
+    }
+
+    /* Usage bar */
+    .usage-section {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .usage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .usage-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+    }
+    .usage-count {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .usage-count span { color: var(--accent); }
+    .bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 8px var(--glow);
+    }
+    .bar-fill.warn { background: linear-gradient(90deg, var(--warn), #f97316); }
+    .bar-fill.danger { background: linear-gradient(90deg, var(--danger), #dc2626); }
+    .usage-info {
+      margin-top: 5px;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* Language selector */
+    .lang-section {
+      padding: 16px 20px;
+    }
+    .section-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    /* Search input */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      padding: 9px 10px 9px 32px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+
+    /* Selected language display */
+    .selected-lang {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: linear-gradient(135deg, rgba(124,106,247,0.15), rgba(247,106,138,0.08));
+      border: 1px solid rgba(124,106,247,0.3);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .selected-lang:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--glow);
+    }
+    .sel-flag { font-size: 22px; }
+    .sel-info { flex: 1; }
+    .sel-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .sel-code {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .sel-arrow { color: var(--muted); font-size: 12px; transition: transform 0.2s; }
+    .selected-lang.open .sel-arrow { transform: rotate(180deg); }
+
+    /* Language grid */
+    .lang-grid {
+      display: none;
+      max-height: 220px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      padding: 6px;
+      gap: 4px;
+      flex-direction: column;
+    }
+    .lang-grid.visible { display: flex; }
+    .lang-grid::-webkit-scrollbar { width: 4px; }
+    .lang-grid::-webkit-scrollbar-track { background: transparent; }
+    .lang-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+    .lang-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+    }
+    .lang-item:hover { background: rgba(124,106,247,0.1); border-color: rgba(124,106,247,0.2); }
+    .lang-item.active {
+      background: rgba(124,106,247,0.2);
+      border-color: rgba(124,106,247,0.4);
+    }
+    .lang-flag { font-size: 18px; width: 24px; text-align: center; }
+    .lang-name { font-size: 13px; font-weight: 500; flex: 1; }
+    .lang-native { font-size: 11px; color: var(--muted); }
+    .lang-check { color: var(--accent); font-size: 13px; display: none; }
+    .lang-item.active .lang-check { display: block; }
+
+    /* Status area */
+    .status-section {
+      padding: 0 20px 16px;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+    .status-pill.off {
+      background: rgba(136,138,160,0.12);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .status-pill.on {
+      background: rgba(74,222,128,0.12);
+      color: var(--success);
+      border: 1px solid rgba(74,222,128,0.25);
+    }
+    .status-pill.limited {
+      background: rgba(251,191,36,0.12);
+      color: var(--warn);
+      border: 1px solid rgba(251,191,36,0.25);
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .status-pill.on .status-dot { animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Footer */
+    .footer {
+      padding: 10px 20px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-tip {
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .reset-btn {
+      font-size: 10px;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+    .reset-btn:hover { color: var(--danger); border-color: var(--danger); }
+  </style>
 </head>
-<body style="padding:0px 10px;text-align:center;width:250px;">
+<body>
+  <div class="ambient"></div>
 
-  <div id="hoverBox">
-  <a href="https://zeylontop10.com/nadeesha-weerasekara" target="_blank" > <img alt="Developed By Nadeesha-weerasekara" style="margin-top: 16px; " width="50" src="img/large.png"></a>
-
-    <h2 style="color: white; text-shadow: 2px 4px 4px rgba(24, 25, 26, 0.6);">Translate To Sinhala</h2>
-    <div class="content">
-        <input type="checkbox" id="btn">
-        <label for="btn" style="margin-left: 75px;">
-          <span class="track"></span>
-          <span class="thumb">
-            <span class="eye"></span>
-          </span>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-row">
+      <div class="logo">
+       <a target="_blank" href="https://nadeesha95.github.io/translate-to-sinhala.html"> <div class="logo-icon"><img src="icons/logo.png" width="40"></div></a>
+        <div>
+          <div class="logo-text">LinguaSnap</div>
+          <div class="logo-sub">Instant Translator</div>
+        </div>
+      </div>
+      <div class="power-wrap">
+        <div class="power-label" id="powerLabel">OFF</div>
+        <label class="toggle">
+          <input type="checkbox" id="toggleSwitch" />
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
         </label>
       </div>
+    </div>
   </div>
 
-</body>
+  <!-- Usage Bar -->
+  <div class="usage-section">
+    <div class="usage-header">
+      <span class="usage-label">Today</span>
+      <span class="usage-count"><span id="usedWords">0</span> words translated</span>
+    </div>
+    <div class="usage-info" id="usageInfo">Unlimited translations · Powered by Google Translate</div>
+  </div>
 
+  <!-- Language Selector -->
+  <div class="lang-section">
+    <div class="section-label">Translate to</div>
+
+    <div class="search-wrap" id="searchWrap" style="display:none;">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="langSearch" type="text" placeholder="Search language…" />
+    </div>
+
+    <div class="selected-lang" id="selectedLang">
+      <span class="sel-flag" id="selFlag">🇸🇮</span>
+      <div class="sel-info">
+        <div class="sel-name" id="selName">Sinhala</div>
+        <div class="sel-code" id="selCode">SI · සිංහල</div>
+      </div>
+      <span class="sel-arrow" id="selArrow">▼</span>
+    </div>
+
+    <div class="lang-grid" id="langGrid"></div>
+  </div>
+
+  <!-- Status -->
+  <div class="status-section">
+    <div class="status-pill off" id="statusPill">
+      <div class="status-dot"></div>
+      <span id="statusText">Extension is off — toggle to enable</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+<div class="footer">
+  <div class="footer-tip">Select any text on a webpage<br>to see instant translation</div>
+  <a target="_blank"  class="footer-tip" href="https://nadeesha95.github.io/index.html">DEVELOPER</a>
+  <a target="_blank"  class="footer-tip" href="https://nadeesha95.github.io/translate-to-sinhala.html">SUPPORT</a>
+</div>
+
+  <script src="js/popup.js"></script>
+</body>
 </html>

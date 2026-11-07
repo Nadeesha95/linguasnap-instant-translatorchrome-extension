@@ -1,19 +1,38 @@
 {
-    "manifest_version": 3,
-    "name": "Translate To Sinhala",
-    "version": "1.0",
-    "description": " 'Translate to Sinhala' is a powerful Chrome extension that simplifies language translation. Simply select any text within your browser window, and with a quick click, effortlessly translate it to Sinhala. Developed By : Nadeesha weerasekara",
-    "action": {
-      "default_popup": "popup.html",
-      "default_icon": {
-        "16": "img/small.png", 
-        "48": "img/big.png", 
-        "128": "img/large.png" 
-      }  
-    },
-    "permissions": ["activeTab"],
-    "content_scripts": [{
+  "manifest_version": 3,
+  "name": "LinguaSnap – Instant Translator",
+  "version": "4.2",
+  "description": "Select any text to instantly translate into 25 languages. Select to translate",
+  "permissions": ["activeTab", "storage", "scripting"],
+  "host_permissions": [
+    "https://translate.googleapis.com/*",
+    "https://api.mymemory.translated.net/*"
+  ],
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
       "matches": ["<all_urls>"],
-      "js": ["js/content.js"]
-    }]
+      "js": ["js/dictionary.js","js/content.js"],
+      "css": ["css/tooltip.css"]
+    },
+    {
+      "matches": ["*://www.youtube.com/*"],
+      "js": ["js/promo.js"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   }
+}
